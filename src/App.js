@@ -9,32 +9,76 @@ class App extends React.Component {
     contacts: contacts.slice(0,5)
   }
 
-  // clickHandler = () => {
-  //   this.setState((state,props) => ({
-  //     this.contacts.id: this.contacts.id = Math.floor(Math.random() * Math.floor(5))+1
-  //   }));
-  // }
+  addRandomContact = () => {
+    const stateContactsIds = this.state.contacts.map(contact => contact.id);
+    // console.log('FIRST LOG', stateContactsIds)
+    const restOfTheContacts = contacts.filter(contact => !stateContactsIds.includes(contact.id)) //if the contact id is not inside stateContactsIds then it's inside the new variable
+    // console.log('SECOND LOG', restOfTheContacts)
+    const randomContact = restOfTheContacts[Math.floor(Math.random() *restOfTheContacts.length)]
+    console.log('THIRD LOG', randomContact)
+    const newContactList = this.state.contacts.concat(randomContact); 
+    // console.log('FOURTH LOG', newContactList)
+    this.setState((state, props) => ({ 
+      contacts: newContactList    
+       }))
+    }
 
+  sortByName = () => {
+      const sortedContacts = this.state.contacts.sort((a,b) => {
+        if(a.name > b.name) return -1
+        if(a.name < b.name) return 1
+      })
+      this.setState((state, props) => ({
+        contacts: sortedContacts
+      }))
+    
+  }
+
+  sortByPop = () => {
+    const sortedPop = this.state.contacts.sort((a,b) => {
+      if(a.popularity > b.popularity) return -1
+      if(a.popularity < b.popularity) return 1
+    })
+    this.setState((state, props) => ({
+      contacts: sortedPop
+    }))
+  
+}
+
+removeContact = id => {
+  const contactCopy = this.state.contacts;
+ const contactId = contactCopy.findIndex(contact => contact.id === id);
+ contactCopy.splice(contactId, 1)
+
+ this.setState((state, props) => ({
+  contacts: contactCopy
+}))
+}
 
   render() {
-
+    // console.log(this.state.contacts)
     return (
       <div>
-      <h1>Contacts List</h1>
-      <button onClick={this.clickHandler}>Add Random Contact</button>
+     
+      <button onClick={this.addRandomContact}>Add Random Contact</button>
+      <button onClick={this.sortByName}>Sort by Name</button>
+      <button onClick={this.sortByPop}>Sort by Popularity</button>
+      
 
       <table>
-        {this.state.contacts.slice(0,5).map(item => (
+        <th>Picture</th>
+        <th>Name</th>
+        <th>Popularity</th>
+        <th>Action</th>
+
+        {this.state.contacts.map(item => (
           <tr key={item.id}>
-           <th>Name: {item.name}</th>
-           <th>Popularity: {item.popularity.toFixed(2)}</th>
-           <img style={{width:'100px'}} className='pics' src={item.pictureUrl}/>
+            <img style={{width:'100px'}} src={item.pictureUrl}/>
+           <td>{item.name}</td>
+           <td>{item.popularity.toFixed(2)}</td>
+           <th><button onClick={() => this.removeContact(item.id)}>Delete</button></th>
            </tr>
       ))}
-
-
-
-
 
         </table>
       </div>
